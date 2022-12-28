@@ -1,0 +1,96 @@
+<script>const log = console.log</script>
+
+## 기존과 달라진 ES6에서의 리스트 순회
+  - for i++
+  - for of
+
+<script>
+  const list = [1,2,3];
+  const str = "abc";
+
+  for(var i = 0; i < list.length; i++){
+    log(list[i]);
+  }
+
+  for(var j = 0; j < str.length; j++){
+    log(str[j]);
+  }
+
+  for(const a of list){
+    log(a);
+  }
+
+  for(const b of str){
+    log(b)
+  }
+
+</script>
+
+## 이터러블/ 이터레이터 프로토콜
+- 이터러블: 이터레이터를 반환하는 [Symbol.iterator] 메소드를 가진 값
+- 이터레이터: { value , done }을 반환하는 next 메소드를 가진 값
+- 이터러블/이터레이터 프로토콜: 이터레이터를 for ... of 또는 전개연산자 등과 함께 동작하도록한 규약
+
+## Array
+<script>
+  log("----- Array -----")
+
+  const arr = [1,2,3];
+
+  const arrIter = arr[Symbol.iterator]();
+
+  arrIter.next()
+
+  for(const a of arrIter) log(a);
+
+
+</script>
+
+## Set
+<script>
+  log("----- Set -----")
+
+  const set = new Set([1,2,3]);
+
+  for(const b of set) log(b);
+
+</script>
+
+## Map
+<script>
+  log("----- Map -----")
+
+  const map = new Map([["a",1],["b",2],["c",3]]);
+
+  for(const c of map) log(c);
+</script>
+
+# 사용자 정의 이터러블 구현해보기
+
+<script>
+  log('----- User Custom Iterable -----')
+
+  const iterable = {
+    [Symbol.iterator] (){
+      let i = 3;
+
+      return {
+        next(){
+          return i === 0 ? {done : true} : {value : i--, done : false};
+        },
+        [Symbol.iterator](){
+          return this;
+        }
+      }
+    }
+  }
+
+  const iterator = iterable[Symbol.iterator]();
+
+  iterator.next();
+
+  for(const d of iterator){
+    log(d)
+  }
+
+</script>
