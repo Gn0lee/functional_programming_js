@@ -1,6 +1,18 @@
 const log = console.log;
 
-const reduce = (f, acc, iter) => {
+const curry =
+  (f) =>
+  (a, ..._) =>
+    _.length ? f(a, ..._) : (..._) => f(a, ..._);
+
+const go = (...args) => reduce((a, f) => f(a), args);
+
+const pipe =
+  (f, ...fs) =>
+  (...as) =>
+    go(f(...as), ...fs);
+
+const reduce = curry((f, acc, iter) => {
   // reduce의 내부에서 재귀적으로 callback 함수를 호출
 
   if (!iter) {
@@ -13,9 +25,9 @@ const reduce = (f, acc, iter) => {
   }
 
   return acc;
-};
+});
 
-const filter = (f, iter) => {
+const filter = curry((f, iter) => {
   let res = [];
 
   for (const a of iter) {
@@ -23,9 +35,9 @@ const filter = (f, iter) => {
   }
 
   return res;
-};
+});
 
-const map = (f, iter) => {
+const map = curry((f, iter) => {
   let res = [];
 
   for (const a of iter) {
@@ -33,4 +45,4 @@ const map = (f, iter) => {
   }
 
   return res;
-};
+});

@@ -22,4 +22,104 @@
       add ,
       filter(n => n < 20000, map(p => p.price, products))
     ))
+
+  console.clear()
+</script>
+
+# 코드를 값으로 다루는 방법
+
+## go, pipe
+
+<script>
+
+  go(
+    0,
+    a => a + 1,
+    a => a + 10,
+    a => a + 100,
+    log
+  );
+
+  const f = pipe(
+    (a , b) => a + b,
+    a => a + 10,
+    a => a + 100,
+  )
+
+  log(f(0, 1))
+
+</script>
+
+<script>
+  go(
+    products,
+    products => filter(p => p.price < 20000, products),
+    products => map(p => p.price, products),
+    prices => reduce(add, prices),
+    log
+  )
+
+  go(
+    products,
+    filter(p => p.price < 20000),
+    map(p => p.price),
+    reduce(add),
+    log
+  )
+</script>
+
+# curry
+
+<script>
+  const mult =  curry((a, b) => a * b);
+
+  log(mult(1)(2))
+
+  const mult3 = mult(3);
+
+  log(mult3(3));
+  log(mult3(4));
+
+</script>
+
+<script>
+  const total_price = pipe(
+    map(p => p.price),
+    reduce(add),
+  )
+
+  const base_total_price = predi => pipe(
+    filter(predi),
+    total_price
+  )
+
+  // step 1
+  go(
+    products,
+    filter(p => p.price < 20000),
+    total_price,
+    log
+  )
+
+  go(
+    products,
+    filter(p => p.price >= 20000),
+    total_price,
+    log
+  )
+
+  // step 2
+
+  go(
+    products,
+    base_total_price(p => p.price < 20000),
+    log
+  )
+
+  go(
+    products,
+    base_total_price(p => p.price >= 20000),
+    log
+  )
+
 </script>
