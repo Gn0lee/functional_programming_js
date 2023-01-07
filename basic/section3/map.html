@@ -51,3 +51,58 @@
 
 </script>
 
+# filter
+
+<script>
+  const filter = (f, iter) => {
+    let res = [];
+
+    for(const a of iter){
+      if(f(a)) res.push(a)
+    }
+
+    return res;
+  }
+
+  log(...filter(p => p.price < 20000, products));
+
+  log(filter(n => n % 2, function *(){
+    yield 1;
+    yield 2;
+    yield 3;
+    yield 4;
+    yield 5;
+    yield 6;
+  }()))
+</script>
+
+# reduce
+
+<script>
+  const nums = [1,2,3,4,5];
+
+  const reduce = (f, acc, iter) => {
+    // reduce의 내부에서 재귀적으로 callback 함수를 호출
+
+    if(!iter){
+      iter = acc[Symbol.iterator]();
+      acc = iter.next().value;
+    }
+
+    for(const a of iter){
+      acc = f(acc, a)
+    }
+
+    return acc;
+  }
+
+  const add = (a, b) => a + b;
+
+  log(reduce(add, 0 , nums))
+
+  log(reduce(add , nums))
+</script>
+
+<script>
+  log(reduce((total_price, product) => total_price + product.price , 0, products))
+</script>
