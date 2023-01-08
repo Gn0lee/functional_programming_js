@@ -1,0 +1,54 @@
+<script src="../section3/fx.js"></script>
+
+<script>
+  const add = (a , b) => a + b;
+
+  const range = l => {
+    let i = -1;
+    const res = [];
+
+    while(++i < l) {
+      res.push(i);
+    }
+
+    return res;
+  }
+
+  const list = range(4);
+  log(list);
+  log(reduce(add, list))
+
+</script>
+
+## 느긋한 L.range
+
+<script>
+  const L = {};
+
+  L.range = function *(l){
+    let i = -1;
+
+    while(++i < l){
+      yield i;
+    }
+  }
+
+  const list = L.range(4);
+  log(list);
+  log(reduce(add, list));
+
+  // 위의 Range와 달리 L.range는 함수 실행시 range가 평가된다.
+</script>
+
+<script>
+  function test(name, time, f){
+    console.time(name);
+
+    while(time--) f();
+
+    console.timeEnd(name);
+  }
+
+  test('range', 10, () => reduce(add, range(1000000)));
+  test('L.range', 10, () => reduce(add, L.range(1000000)));
+</script>
