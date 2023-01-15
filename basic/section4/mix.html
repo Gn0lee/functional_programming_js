@@ -1,0 +1,164 @@
+
+
+<script>
+  const take = curry((l, iter) => {
+    let res = [];
+
+    iter = iter[Symbol.iterator]()
+
+    let curr;
+
+    while(!(curr = iter.next()).done){
+      res.push(curr.value)
+      if(res.length == l) return res
+    }
+
+    // for(const a of iter){
+    //   res.push(a);
+    //   if(res.length == l) return res;
+    // }
+
+    return res;
+  })
+
+  const range = l => {
+    let i = -1;
+    const res = [];
+
+    while(++i < l) {
+      res.push(i);
+    }
+
+    return res;
+  }
+
+  const map = curry((f, iter) => {
+    let res = [];
+
+    iter = iter[Symbol.iterator]();
+
+    let curr;
+
+    while(!(curr = iter.next()).done){
+      res.push(f(curr.value));
+    }
+
+    // for (const a of iter) {
+    //   res.push(f(a));
+    // }
+
+    return res;
+  });
+
+  const filter = curry((f, iter) => {
+    let res = [];
+
+    iter = iter[Symbol.iterator]();
+
+    let curr;
+
+    while(!(curr = iter.next()).done){
+      if(f(curr.value)) res.push(curr.value)
+    }
+
+    // for (const a of iter) {
+    //   if (f(a)) res.push(a);
+    // }
+
+    return res;
+  });
+
+  const reduce = curry((f, acc, iter) => {
+
+    if (!iter) {
+      iter = acc[Symbol.iterator]();
+      acc = iter.next().value;
+    }else{
+      iter = iter[Symbol.iterator]();
+    }
+
+    let curr
+
+    while (!(curr = iter.next()).done){
+      acc = f(acc, curr.value)
+    }
+
+    // for (const a of iter) {
+    //   acc = f(acc, a);
+    // }
+
+    return acc;
+  });
+
+  const L = {};
+
+  L.range = function *(l){
+    let i = -1;
+
+    while(++i < l){
+      yield i;
+    }
+  }
+
+  L.map = function *(f, iter){
+    iter = iter[Symbol.iterator]();
+
+    let curr;
+
+    while(!(curr = iter.next()).done){
+      yield f(curr.value)
+    }
+
+  }
+
+  L.filter = function *(f, iter){
+    iter = iter[Symbol.iterator]();
+
+    let curr
+
+    while (!(curr = iter.next()).done){
+      if(f(curr.value)) yield curr.value
+    }
+
+    // for(const a of iter) if(f(a)) yield a;
+  }
+</script>
+
+<script>
+  go(
+    range(10),
+    map(n => n + 10),
+    filter(n => n % 2),
+    take(2),
+    log
+  )
+
+  // [0,1,2,3,4,5,6,7,8,9]
+  // [10,11,12,13, ...]
+  // [11,13]
+
+  go(
+    L.range(10),
+    L.map(n => n + 10),
+    L.filter(n => n % 2),
+    take(2),
+    log
+  )
+
+  // 0      1     ...
+  // 10     11    ...
+  // false  true  ...
+
+</script>
+
+## map, filter 계열 함수들이 가지는 결합 법칙
+
+- 사용하는 데이터가 무엇이든지
+- 사용하는 보조함수가 순수 함수라면 무엇이든지
+- 아래오 ㅏ같이 결합하다면 둘 다 결과가 같다.
+
+[[mapping, mapping], [filtering, filtering], [mapping, mapping]]
+
+=
+
+[[mapping, filtering, mapping], [mapping, filtering, mapping]]
