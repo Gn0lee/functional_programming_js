@@ -1,0 +1,93 @@
+<script src="./fx_flatmap.js"></script>
+
+## L.flatMap
+
+<script>
+  L.flatten = function *(iter){
+    for(const a of iter){
+      if(isIterable(a)) yield *a;
+
+      else yield a;
+    }
+  }
+
+  L.deepFlat = function *f(iter){
+    for(const a of iter){
+      if(isIterable(a)) yield *f(a);
+      else yield a;
+    }
+  }
+
+  const flatten = pipe(L.flatten, takeAll);
+
+  L.flatMap = curry(pipe(L.map, L.flatten));
+
+  const flatMap = curry(pipe(L.map, flatten))
+</script>
+
+## 2차원 배열 다루기
+
+<script>
+  const arr = [
+    [1, 2],
+    [3,4,5],
+    [6,7,8],
+    [9,10]
+  ];
+
+  go(
+    arr,
+    L.flatten,
+    L.filter(a => a % 2),
+    take(3),
+    reduce(add),
+    log
+  )
+</script>
+
+## 지연성 / 이터러블 중심 프로그래밍 실무적인 코드
+
+<script>
+  const users = [
+    {name : 'a', age: 21, family : [
+        {name : 'a1', age: 53},
+        {name : 'a2', age: 47},
+        {name : 'a3', age: 16},
+        {name : 'a4', age: 15}
+      ]
+    },
+    {name : 'b', age: 24, family : [
+        {name : 'b1', age: 58},
+        {name : 'b2', age: 51},
+        {name : 'b3', age: 19},
+        {name : 'b4', age: 22}
+      ]
+    },
+    {name : 'c', age: 31, family : [
+        {name : 'c1', age: 64},
+      ]
+    },
+    {name : 'd', age: 20, family : [
+        {name : 'd1', age: 42},
+        {name : 'd2', age: 42},
+        {name : 'd3', age: 11},
+        {name : 'd4', age: 7},
+      ]
+    },
+  ];
+
+  go(
+    users,
+    L.map(u => u.family),
+    L.flatten,
+    L.filter(u => u.age < 20),
+    L.map(u => u.name),
+    take(4),
+    log
+  )
+
+</script>
+
+## 객체지향 -> 데이터를 우선적으로 정리후 메소드를 구현
+## 함수형 프로그래밍 -> 조합되어있는 함수에 맞는 데이터를 구성, 보다 함수가 우선순위에 있음
+
